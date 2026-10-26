@@ -1,15 +1,20 @@
 [Unit]
 Description=Meggs Node storefront
 After=network.target postgresql.service
+
 [Service]
 Type=simple
 User=meggs
-WorkingDirectory=/opt/meggs
+Group=meggs
+WorkingDirectory=/var/www/html/meggs-site
+EnvironmentFile=/var/www/html/meggs-site/.env
 Environment=NODE_ENV=production
-ExecStart=/usr/bin/node /opt/meggs/server.js
+ExecStart=/usr/bin/node /var/www/html/meggs-site/server.js
 Restart=on-failure
 RestartSec=5
+TimeoutStopSec=15
 NoNewPrivileges=true
 PrivateTmp=true
+
 [Install]
 WantedBy=multi-user.target

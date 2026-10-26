@@ -118,3 +118,29 @@ TEST_DATABASE_URL=postgres://testuser:password@127.0.0.1:5432/postgres npm test
 ```
 
 Coverage includes imports/migrations, API routes, authentication, sessions across server restarts, product/content updates, concurrent stock reservations, price validation, orders, enquiries, subscribers and payment/webhook idempotency. Temporary test databases are removed when tests finish.
+
+## One-command setup for your VPS path
+
+Your project path is `/var/www/html/meggs-site`. Configure application settings once in `/var/www/html/meggs-site/.env`: `DATABASE_URL`, `ADMIN_PASSWORD`, `SITE_URL` (your real public HTTPS domain), `PORT`, and optional Paystack settings. Nginx domain/port are generated from those settings. The Node service runs as the dedicated `meggs` user, not root.
+
+On your Debian/Ubuntu VPS, install Node 24, PostgreSQL, Nginx and dependencies first. Create the database/user and, from the project root, run `npm ci`. If importing your existing JSON catalog, run `npm run db:import -- /var/www/html/meggs-site/data/store.json` before the first server start. Otherwise start empty and add products in admin.
+
+Then run the single installer:
+
+```sh
+cd /var/www/html/meggs-site
+bash deploy/install.sh
+```
+
+It applies migrations, installs `/etc/systemd/system/meggs.service`, generates `/etc/nginx/sites-available/meggs.conf`, enables the site, validates Nginx and restarts the app. Nginx and systemd require separate system files, but you configure the app in one `.env` and install both with one command. Existing Certbot HTTPS configuration is preserved on repeated installs. It does not remove other Nginx sites or import/overwrite your data.
+
+After your DNS points to this VPS, enable HTTPS with your certificate provider. If using Certbot with its Nginx plugin:
+
+```sh
+certbot --nginx -d your-real-domain.com
+systemctl restart meggs
+systemctl status meggs
+journalctl -u meggs -f
+```
+
+Replace the example domain with your actual domain. Production admin cookies require HTTPS. When changing `.env`, restart `meggs`; if changing the port or domain, update the generated Nginx configuration as well (existing HTTPS files are preserved intentionally). Only allow public inbound HTTP/HTTPS; keep the Node and PostgreSQL ports private using your server firewall.
