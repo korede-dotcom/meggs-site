@@ -1,0 +1,4 @@
+import {readFile} from 'node:fs/promises';
+import {migrate,sequelize,importStore} from '../backend/database.js';
+import {initial} from '../backend/seed-data.js';
+try{await migrate();const command=process.argv[2]||'migrate';if(command==='import'){const source=process.argv[3]||'data/store.json';await importStore(JSON.parse(await readFile(source,'utf8')));console.log('Existing JSON data imported successfully. Source file preserved.')}else if(command==='seed'){await importStore(initial);console.log('Sample catalog added. Replace sample products before accepting real payments.')}else if(command!=='migrate')throw Error('Unknown database command');else console.log('Database migrations complete.')}catch(error){console.error('Database operation failed:',error.message);process.exitCode=1}finally{await sequelize.close()}
