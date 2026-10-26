@@ -1,3 +1,5 @@
 data/*.json
 .env
 node_modules/
+playwright-report/
+test-results/

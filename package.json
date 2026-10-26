@@ -9,7 +9,8 @@
     "test": "node --test test/*.test.js",
     "db:migrate": "node scripts/database.js migrate",
     "db:import": "node scripts/database.js import",
-    "db:seed": "node scripts/database.js seed"
+    "db:seed": "node scripts/database.js seed",
+    "test:ui": "playwright test"
   },
   "dependencies": {
     "pg": "^8.23.1",
@@ -23,5 +24,8 @@
     "sequelize": {
       "uuid": "^11.1.1"
     }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1"
   }
 }

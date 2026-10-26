@@ -1,0 +1,2 @@
+import {defineConfig} from '@playwright/test';
+export default defineConfig({testDir:'./test',testMatch:'mobile.spec.js',workers:1,use:{baseURL:'http://127.0.0.1:3400',headless:true,launchOptions:process.env.CHROME_EXECUTABLE_PATH?{executablePath:process.env.CHROME_EXECUTABLE_PATH}:{},trace:'retain-on-failure'},webServer:{command:'node fixtures/ui-preview.js',url:'http://127.0.0.1:3400',reuseExistingServer:!process.env.CI}});

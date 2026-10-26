@@ -144,3 +144,16 @@ journalctl -u meggs -f
 ```
 
 Replace the example domain with your actual domain. Production admin cookies require HTTPS. When changing `.env`, restart `meggs`; if changing the port or domain, update the generated Nginx configuration as well (existing HTTPS files are preserved intentionally). Only allow public inbound HTTP/HTTPS; keep the Node and PostgreSQL ports private using your server firewall.
+
+## Mobile interface checks
+
+The storefront uses vector decorative icons, responsive collage sizing, floating photo animations, scroll reveals, an animated mobile menu and reduced-motion support. Upload the **entire `public` directory**, including `public/assets/glowwithmeggs`, when updating the VPS; missing photo files cannot be restored by CSS. Hero images have a portrait fallback if an asset fails to load. The stylesheet/script version in `index.html` refreshes cached frontend assets.
+
+Browser checks run independently of PostgreSQL using an isolated read-only sample preview server:
+
+```sh
+npx playwright install chromium
+npm run test:ui
+```
+
+For an existing Chrome installation, set `CHROME_EXECUTABLE_PATH` instead. Tests cover 320, 375, 390, 430, 768 and 1440 pixel layouts, navigation, photo loading/fallback and reduced motion. `fixtures/ui-preview.js` is only a test fixture and must not be used to serve the deployed store.
